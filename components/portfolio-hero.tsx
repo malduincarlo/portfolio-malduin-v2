@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
   contactLinks,
   locationInfo,
@@ -11,9 +12,18 @@ import { PortfolioIcon, type PortfolioIconName } from "@/components/portfolio-ic
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
 function HeroCopy() {
+  const copyRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: copyRef,
+    offset: ["start center", "end start"],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], [0, -70]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.96]);
+  const opacity = useTransform(scrollYProgress, [0, 0.82], [1, 0.2]);
+
   return (
     <motion.section
-      id="home"
+      ref={copyRef}
       aria-labelledby="hero-heading"
       initial="hidden"
       animate="visible"
@@ -26,6 +36,7 @@ function HeroCopy() {
           },
         },
       }}
+      style={{ y, scale, opacity }}
       className="absolute left-1/2 top-1/2 z-10 flex w-full max-w-[650px] -translate-x-1/2 -translate-y-1/2 flex-col items-center px-6 text-center text-white"
     >
       <motion.h1
@@ -64,11 +75,20 @@ function HeroCopy() {
 }
 
 function FooterMeta() {
+  const footerRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: footerRef,
+    offset: ["start end", "end start"],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], [18, -36]);
+
   return (
     <motion.footer
-      initial={{ opacity: 0, y: 18 }}
-      animate={{ opacity: 1, y: 0 }}
+      ref={footerRef}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.7, delay: 0.55, ease: easeOut }}
+      style={{ y }}
       className="absolute bottom-[30px] left-0 z-10 flex w-full items-end justify-between px-9 text-white/72"
     >
       <div>
@@ -103,9 +123,8 @@ export function PortfolioHero() {
   return (
     <section
       id="home"
-      className="relative min-h-svh overflow-hidden bg-[url('/bg.jpg')] bg-cover bg-center font-sans text-white"
+      className="relative min-h-svh overflow-hidden font-sans text-white"
     >
-      <div className="absolute inset-0 bg-black/5" aria-hidden="true" />
       <HeroCopy />
       <FooterMeta />
     </section>

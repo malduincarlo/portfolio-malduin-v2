@@ -1,6 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import Image from "next/image";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  type MotionStyle,
+} from "framer-motion";
 import {
   aboutCopy,
   profileHighlights,
@@ -20,8 +27,18 @@ function ProfilePhotoPlaceholder() {
   return (
     <div
       aria-label="Profile photo placeholder"
-      className="h-[154px] w-[154px] rounded-full border border-white/20 bg-[radial-gradient(circle_at_45%_28%,rgba(255,255,255,0.55),rgba(255,255,255,0.22)_28%,rgba(0,0,0,0.35)_70%)] shadow-[inset_0_0_40px_rgba(0,0,0,0.2)]"
-    />
+      className="relative h-[154px] w-[154px] overflow-hidden rounded-full border border-white/20 bg-white/10 shadow-[inset_0_0_40px_rgba(0,0,0,0.2)]"
+    >
+      <Image
+        src={profileMeta.imageSrc}
+        alt={`${profileMeta.name} portrait`}
+        fill
+        sizes="154px"
+        className="object-cover grayscale"
+        priority={false}
+      />
+      <div className="absolute inset-0 bg-black/10" aria-hidden="true" />
+    </div>
   );
 }
 
@@ -97,11 +114,12 @@ function SkillLogo({ icon }: { icon: string }) {
   return null;
 }
 
-function ProfileCard() {
+function ProfileCard({ style }: { style?: MotionStyle }) {
   return (
     <motion.div
       variants={revealUp}
       transition={{ duration: 0.75, ease: easeOut }}
+      style={style}
       className="mt-[34px] rounded-[22px] border border-white/18 px-[26px] pb-[28px] pt-[29px] text-white/80"
     >
       <div className="mx-auto grid max-w-[725px] grid-cols-[154px_1fr] items-start gap-[26px]">
@@ -160,7 +178,7 @@ function ProfileCard() {
             className="flex w-[58px] flex-col items-center"
           >
             <div className="grid h-[52px] w-[52px] place-items-center rounded-full border border-[#c0ad63]/65 bg-[#837d55]/25 text-white/80">
-              {"icon" in skill ? (
+              {skill.icon ? (
                 <SkillLogo icon={skill.icon} />
               ) : (
                 <span className="text-[40px] font-light leading-none text-white/65">
@@ -186,11 +204,14 @@ function ProfileCard() {
             transition={{ duration: 0.6, ease: easeOut }}
             className={`relative overflow-hidden border border-black/15 ${item.className}`}
           >
-            <div className={`absolute inset-0 ${item.tone}`} />
-            <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.2),transparent_45%,rgba(0,0,0,0.22))]" />
-            <span className="absolute left-4 top-4 rounded-sm bg-black/35 px-3 py-2 text-[12px] font-semibold text-white/85">
-              {item.label}
-            </span>
+            <Image
+              src={item.imageSrc}
+              alt={`${item.label} preview`}
+              fill
+              sizes="(max-width: 900px) 100vw, 33vw"
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.1),transparent_45%,rgba(0,0,0,0.16))]" />
           </motion.div>
         ))}
       </div>
@@ -198,11 +219,12 @@ function ProfileCard() {
   );
 }
 
-function AboutCopy() {
+function AboutCopy({ style }: { style?: MotionStyle }) {
   return (
     <motion.div
       variants={revealUp}
       transition={{ duration: 0.75, delay: 0.12, ease: easeOut }}
+      style={style}
       className="mt-[31px] max-w-[1050px] text-white"
     >
       <p className="text-[20px] font-bold leading-[1.45] text-white">
@@ -228,13 +250,22 @@ function AboutCopy() {
 }
 
 export function AboutSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const headingY = useTransform(scrollYProgress, [0, 1], [34, -34]);
+  const cardY = useTransform(scrollYProgress, [0, 1], [58, -42]);
+  const copyY = useTransform(scrollYProgress, [0, 1], [32, -66]);
+
   return (
     <section
+      ref={sectionRef}
       id="about"
       aria-labelledby="about-heading"
-      className="relative min-h-svh overflow-hidden bg-[url('/bg.jpg')] bg-cover bg-center px-9 pb-[76px] pt-[84px] font-sans text-white"
+      className="relative min-h-svh overflow-hidden px-9 pb-[76px] pt-[84px] font-sans text-white"
     >
-      <div className="absolute inset-0 bg-black/5" aria-hidden="true" />
       <motion.div
         initial="hidden"
         whileInView="visible"
@@ -253,12 +284,13 @@ export function AboutSection() {
           id="about-heading"
           variants={revealUp}
           transition={{ duration: 0.7, ease: easeOut }}
+          style={{ y: headingY }}
           className="text-[34px] font-bold leading-none tracking-normal text-white"
         >
           about.
         </motion.h2>
-        <ProfileCard />
-        <AboutCopy />
+        <ProfileCard style={{ y: cardY }} />
+        <AboutCopy style={{ y: copyY }} />
       </motion.div>
     </section>
   );

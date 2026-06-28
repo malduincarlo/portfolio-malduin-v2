@@ -12,49 +12,75 @@ export function SiteHeader({ initialActiveHref = "#home" }: SiteHeaderProps) {
   const [activeHref, setActiveHref] = useState(initialActiveHref);
 
   useEffect(() => {
-    const sectionIds = navigationItems
+    const sectionTargets = navigationItems
       .map((item) => item.href)
       .filter((href) => href.startsWith("#"))
-      .map((href) => href.slice(1));
+      .map((href) => ({
+        href,
+        element: document.getElementById(href.slice(1)),
+      }))
+      .filter(
+        (target): target is { href: string; element: HTMLElement } =>
+          Boolean(target.element),
+      );
 
-    const sections = sectionIds
-      .map((id) => document.getElementById(id))
-      .filter((section): section is HTMLElement => Boolean(section));
-
-    if (!sections.length) {
+    if (!sectionTargets.length) {
       return;
     }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visibleEntry = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+    let frameId = 0;
 
-        if (visibleEntry) {
-          setActiveHref(`#${visibleEntry.target.id}`);
-        }
-      },
-      {
-        rootMargin: "-35% 0px -45% 0px",
-        threshold: [0.2, 0.45, 0.7],
-      },
-    );
+    const updateActiveSection = () => {
+      const activationLine = 96;
+      const currentTarget =
+        sectionTargets.findLast(({ element }) => {
+          const rect = element.getBoundingClientRect();
+          return rect.top <= activationLine && rect.bottom > activationLine;
+        }) ??
+        sectionTargets.reduce((nearest, target) => {
+          const nearestDistance = Math.abs(
+            nearest.element.getBoundingClientRect().top - activationLine,
+          );
+          const targetDistance = Math.abs(
+            target.element.getBoundingClientRect().top - activationLine,
+          );
 
-    sections.forEach((section) => observer.observe(section));
+          return targetDistance < nearestDistance ? target : nearest;
+        }, sectionTargets[0]);
 
-    return () => observer.disconnect();
+      setActiveHref(currentTarget.href);
+    };
+
+    const requestUpdate = () => {
+      cancelAnimationFrame(frameId);
+      frameId = requestAnimationFrame(updateActiveSection);
+    };
+
+    updateActiveSection();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+    };
   }, []);
+
+  const handleNavClick = (href: string) => {
+    setActiveHref(href);
+  };
 
   return (
     <motion.header
       initial={{ opacity: 0, y: -16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed left-0 top-0 z-50 flex w-full items-start justify-between px-9 pt-[35px] text-white/70"
+      className="fixed left-0 top-0 z-50 flex w-full items-center justify-between bg-white/[0.025] px-9 py-[22px] text-white/70 backdrop-blur-[3px]"
     >
       <a
         href="#home"
+        onClick={() => handleNavClick("#home")}
         className="text-[16px] font-normal leading-none transition-colors hover:text-white"
       >
         {siteIdentity.shortName}
@@ -70,15 +96,23 @@ export function SiteHeader({ initialActiveHref = "#home" }: SiteHeaderProps) {
                 <motion.a
                   href={item.href}
                   aria-current={isActive ? "page" : undefined}
+                  onClick={() => handleNavClick(item.href)}
                   animate={{
                     opacity: isActive ? 1 : 0.67,
                     fontWeight: isActive ? 600 : 400,
+                    scale: isActive ? 1.04 : 1,
+                    textShadow: isActive
+                      ? "0 0 18px rgba(255,255,255,0.28)"
+                      : "0 0 0 rgba(255,255,255,0)",
                   }}
-                  transition={{ duration: 0.28, ease: "easeOut" }}
+                  transition={{
+                    duration: 0.38,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
                   className={
                     isActive
-                      ? "font-semibold text-white"
-                      : "font-normal text-white/67 transition-colors hover:text-white"
+                      ? "inline-block font-semibold text-white"
+                      : "inline-block font-normal text-white/67 transition-colors hover:text-white"
                   }
                 >
                   {item.label}

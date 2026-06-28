@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { experienceItems } from "@/constants/portfolio";
 
@@ -88,25 +89,26 @@ function DevicesPlaceholder() {
   return (
     <div className="relative h-full w-full overflow-hidden bg-[radial-gradient(circle_at_50%_80%,rgba(255,255,255,0.12),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.08),rgba(0,0,0,0.2))]">
       <div className="absolute left-[66px] top-[70px] h-[146px] w-[250px] -rotate-[20deg] rounded-[8px] bg-[#333] shadow-2xl">
-        <div className="absolute inset-[6px] rounded-[4px] bg-[linear-gradient(135deg,#d7d9d3,#7d8580)]">
-          <div className="absolute left-8 top-12 text-[28px] font-bold text-[#5c8f32]">
-            eTCMF
-          </div>
+        <div className="absolute inset-[6px] overflow-hidden rounded-[4px] bg-[#d7d9d3]">
+          <Image
+            src="/Login.png"
+            alt="ETCMF login preview"
+            fill
+            sizes="250px"
+            className="object-cover"
+          />
         </div>
         <div className="absolute -bottom-[42px] left-[58px] h-[54px] w-[170px] skew-x-[-24deg] rounded-sm bg-[#878985]" />
       </div>
       <div className="absolute right-[70px] top-[34px] h-[230px] w-[104px] rounded-[24px] bg-black p-[7px] shadow-2xl">
-        <div className="h-full rounded-[18px] bg-[#eef0ea] p-[10px]">
-          <div className="mx-auto mb-3 h-[13px] w-[40px] rounded-full bg-black" />
-          <div className="text-[8px] font-bold text-[#4f7f24]">
-            Good Morning, John!
-          </div>
-          <div className="mt-3 space-y-[5px]">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <div key={index} className="h-[9px] rounded-full bg-[#cfd8ca]" />
-            ))}
-          </div>
-          <div className="mt-4 h-[76px] rounded-md bg-[linear-gradient(135deg,#eef2f1,#9fc48a)]" />
+        <div className="relative h-full overflow-hidden rounded-[18px] bg-[#eef0ea]">
+          <Image
+            src="/Login%20Page.png"
+            alt="ETCMF mobile preview"
+            fill
+            sizes="104px"
+            className="object-cover"
+          />
         </div>
       </div>
     </div>
@@ -116,19 +118,53 @@ function DevicesPlaceholder() {
 function CollagePlaceholder() {
   return (
     <div className="grid h-full w-full grid-cols-[1fr_1fr_0.95fr] grid-rows-2 gap-[12px] bg-[rgba(255,255,255,0.04)] p-[24px]">
-      <div className="relative overflow-hidden bg-[linear-gradient(135deg,#0d2028,#d3c0ba_58%,#0b0d10)]">
-        <span className="absolute left-3 top-3 border border-red-500/80 px-2 py-1 text-[10px] font-bold text-red-400">
-          photo
-        </span>
+      <div className="relative overflow-hidden bg-[#0d2028]">
+        <Image
+          src="/louiza%20cover%202.JPG"
+          alt="Creative portrait preview"
+          fill
+          sizes="180px"
+          className="object-cover"
+        />
       </div>
-      <div className="bg-[linear-gradient(135deg,#61573c,#d5c79b_42%,#7b242d)]" />
-      <div className="row-span-2 bg-[linear-gradient(135deg,#faf1e8,#e9d5c5_52%,#b5b5a8)]" />
-      <div className="col-span-2 bg-[linear-gradient(135deg,#d8e3d1,#5f7e63_52%,#1f2428)]" />
+      <div className="relative overflow-hidden bg-[#61573c]">
+        <Image
+          src="/cover_whole.jpg"
+          alt="Road photography preview"
+          fill
+          sizes="180px"
+          className="object-cover"
+        />
+      </div>
+      <div className="relative row-span-2 overflow-hidden bg-[#faf1e8]">
+        <Image
+          src="/cover%20full.JPG"
+          alt="Editorial portrait preview"
+          fill
+          sizes="180px"
+          className="object-cover"
+        />
+      </div>
+      <div className="relative col-span-2 overflow-hidden bg-[#202326]">
+        <Image
+          src="/image%2013.png"
+          alt="Videography preview"
+          fill
+          sizes="360px"
+          className="object-cover"
+        />
+      </div>
     </div>
   );
 }
 
-function MediaPlaceholder({ media }: { media: ExperienceItem["media"] }) {
+function MediaPlaceholder({
+  media,
+  imageSrc,
+}: {
+  media: ExperienceItem["media"];
+  imageSrc?: string;
+}) {
   return (
     <motion.div
       variants={{
@@ -138,7 +174,18 @@ function MediaPlaceholder({ media }: { media: ExperienceItem["media"] }) {
       transition={{ duration: 0.75, ease: easeOut }}
       className="h-[302px] overflow-hidden rounded-[9px] border border-white/24 bg-white/7"
     >
-      {media === "dashboard" && <DashboardPlaceholder />}
+      {imageSrc ? (
+        <div className="relative h-full w-full bg-[#11171a]">
+          <Image
+            src={imageSrc}
+            alt={`${media} preview`}
+            fill
+            sizes="(max-width: 900px) 100vw, 525px"
+            className="object-contain p-[18px]"
+          />
+        </div>
+      ) : null}
+      {!imageSrc && media === "dashboard" && <DashboardPlaceholder />}
       {media === "devices" && <DevicesPlaceholder />}
       {media === "collage" && <CollagePlaceholder />}
     </motion.div>
@@ -207,7 +254,7 @@ function ExperienceRow({ item }: { item: ExperienceItem }) {
           <span className="text-[#c8b56d]/70">|</span>
           <span>{item.period}</span>
         </motion.div>
-        <MediaPlaceholder media={item.media} />
+        <MediaPlaceholder media={item.media} imageSrc={item.imageSrc} />
       </div>
     </motion.article>
   );
@@ -218,9 +265,8 @@ export function WorkExperienceSection() {
     <section
       id="works"
       aria-labelledby="works-heading"
-      className="relative overflow-hidden bg-[url('/bg.jpg')] bg-cover bg-center px-9 pb-[75px] pt-[85px] font-sans text-white"
+      className="relative overflow-hidden px-9 pb-[75px] pt-[85px] font-sans text-white"
     >
-      <div className="absolute inset-0 bg-black/5" aria-hidden="true" />
       <div className="relative z-10 mx-auto max-w-[1076px]">
         <motion.h2
           id="works-heading"

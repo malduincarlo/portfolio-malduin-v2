@@ -2,8 +2,7 @@ import { footerInfo } from "@/constants/portfolio";
 
 export function SiteFooter() {
   return (
-    <footer className="relative overflow-hidden bg-[url('/bg.jpg')] bg-cover bg-center px-9 py-[44px] text-center font-sans text-white">
-      <div className="absolute inset-0 bg-black/10" aria-hidden="true" />
+    <footer className="relative overflow-hidden px-9 py-[44px] text-center font-sans text-white">
       <div className="relative z-10 mx-auto flex max-w-[520px] flex-col items-center text-[16px] leading-none text-white/88">
         <a
           href={`mailto:${footerInfo.email}`}

@@ -1,6 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { gallerySections } from "@/constants/portfolio";
 
@@ -100,6 +101,9 @@ function VideoDetails({ label }: { label: string }) {
 }
 
 function GalleryTile({ item }: { item: GalleryItemData }) {
+  const imageSrc = "imageSrc" in item ? item.imageSrc : undefined;
+  const imageClassName =
+    "imageClassName" in item ? item.imageClassName : undefined;
   const style = {
     background: item.background,
   } satisfies CSSProperties;
@@ -112,10 +116,22 @@ function GalleryTile({ item }: { item: GalleryItemData }) {
       className={`relative overflow-hidden bg-white/8 shadow-[0_18px_45px_rgba(0,0,0,0.16)] ${item.className}`}
       style={style}
     >
-      <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.16),transparent_42%,rgba(0,0,0,0.18))]" />
-      <DashboardDetails item={item} />
-      {item.label === "editorial portrait" && <EditorialDetails />}
-      {item.label.includes("channel") && <VideoDetails label={item.label} />}
+      {imageSrc ? (
+        <Image
+          src={imageSrc}
+          alt={item.label}
+          fill
+          sizes="(max-width: 900px) 100vw, 50vw"
+          className={imageClassName ?? "object-cover"}
+        />
+      ) : (
+        <>
+          <DashboardDetails item={item} />
+          {item.label === "editorial portrait" && <EditorialDetails />}
+          {item.label.includes("channel") && <VideoDetails label={item.label} />}
+        </>
+      )}
+      <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),transparent_42%,rgba(0,0,0,0.16))]" />
       <span className="sr-only">{item.label}</span>
     </motion.div>
   );
@@ -160,10 +176,9 @@ export function GallerySection() {
     <section
       id="gallery"
       aria-labelledby="gallery-heading"
-      className="relative overflow-hidden bg-[url('/bg.jpg')] bg-cover bg-center px-9 pb-[74px] pt-[72px] font-sans text-white"
+      className="relative overflow-hidden px-9 pb-[74px] pt-[72px] font-sans text-white"
     >
-      <div className="absolute inset-0 bg-black/5" aria-hidden="true" />
-      <div className="relative z-10 mx-auto max-w-[900px]">
+      <div className="relative z-10 mx-auto max-w-[1075px]">
         <motion.h2
           id="gallery-heading"
           initial={{ opacity: 0, y: 22, filter: "blur(7px)" }}
