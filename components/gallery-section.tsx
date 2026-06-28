@@ -21,8 +21,8 @@ function DashboardDetails({ item }: { item: GalleryItemData }) {
   }
 
   return (
-    <div className="absolute inset-4 grid grid-cols-4 grid-rows-3 gap-2">
-      <div className="col-span-2 row-span-2 rounded-sm bg-black/30 p-3">
+    <div className="absolute inset-3 grid grid-cols-4 grid-rows-3 gap-1.5 sm:inset-4 sm:gap-2">
+      <div className="col-span-2 row-span-2 rounded-sm bg-black/30 p-2 sm:p-3">
         <div className="mb-3 grid grid-cols-4 gap-2">
           {["12", "23", "34", "3"].map((value) => (
             <div key={value}>
@@ -48,12 +48,12 @@ function DashboardDetails({ item }: { item: GalleryItemData }) {
 function EditorialDetails() {
   return (
     <div className="absolute inset-0 flex flex-col justify-between">
-      <div className="flex h-[54px] items-center justify-between bg-white px-5 text-[#202421]">
+      <div className="flex h-[46px] items-center justify-between bg-white px-4 text-[#202421] sm:h-[54px] sm:px-5">
         <span className="text-[13px] font-bold">perspective</span>
         <span className="text-[20px] leading-none">...</span>
       </div>
-      <div className="px-5 pb-[74px]">
-        <div className="mx-auto h-[340px] max-w-[260px] rounded-t-full bg-[linear-gradient(135deg,#f2cfbd,#fdf3ea_55%,#d6bca8)]" />
+      <div className="px-4 pb-14 sm:px-5 sm:pb-[74px]">
+        <div className="mx-auto h-[240px] max-w-[220px] rounded-t-full bg-[linear-gradient(135deg,#f2cfbd,#fdf3ea_55%,#d6bca8)] sm:h-[340px] sm:max-w-[260px]" />
       </div>
       <div className="bg-white px-5 py-5 text-[12px] font-semibold text-[#202421]">
         perspective&nbsp; for @eriel, pt. 2
@@ -151,18 +151,18 @@ function GalleryGroup({ section }: { section: GallerySectionData }) {
           },
         },
       }}
-      className="border-b border-white/13 pb-[37px] pt-[30px] first:pt-0"
+      className="border-b border-white/13 pb-8 pt-7 first:pt-0 sm:pb-[37px] sm:pt-[30px]"
       aria-labelledby={`gallery-${section.layout}`}
     >
       <motion.h3
         id={`gallery-${section.layout}`}
         variants={revealUp}
         transition={{ duration: 0.62, ease: easeOut }}
-        className="mb-[24px] text-[20px] font-bold leading-none text-white/92"
+        className="mb-5 text-[18px] font-bold leading-none text-white/92 sm:mb-[24px] sm:text-[20px]"
       >
         {section.title}
       </motion.h3>
-      <div className="grid grid-cols-12 gap-[16px]">
+      <div className="grid grid-cols-12 gap-3 sm:gap-[16px]">
         {section.items.map((item) => (
           <GalleryTile key={item.label} item={item} />
         ))}
@@ -176,7 +176,7 @@ export function GallerySection() {
     <section
       id="gallery"
       aria-labelledby="gallery-heading"
-      className="relative overflow-hidden px-9 pb-[74px] pt-[72px] font-sans text-white"
+      className="relative overflow-hidden px-4 pb-16 pt-16 font-sans text-white sm:px-6 sm:pb-[74px] sm:pt-[72px] lg:px-9"
     >
       <div className="relative z-10 mx-auto max-w-[1075px]">
         <motion.h2
@@ -185,7 +185,7 @@ export function GallerySection() {
           whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           viewport={{ once: true, amount: 0.7 }}
           transition={{ duration: 0.7, ease: easeOut }}
-          className="mb-[32px] text-[29px] font-bold leading-none text-white"
+          className="mb-7 text-[29px] font-bold leading-none text-white sm:mb-[32px]"
         >
           gallery.
         </motion.h2>

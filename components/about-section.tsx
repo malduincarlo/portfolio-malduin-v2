@@ -27,13 +27,13 @@ function ProfilePhotoPlaceholder() {
   return (
     <div
       aria-label="Profile photo placeholder"
-      className="relative h-[154px] w-[154px] overflow-hidden rounded-full border border-white/20 bg-white/10 shadow-[inset_0_0_40px_rgba(0,0,0,0.2)]"
+      className="relative h-[128px] w-[128px] overflow-hidden rounded-full border border-white/20 bg-white/10 shadow-[inset_0_0_40px_rgba(0,0,0,0.2)] sm:h-[154px] sm:w-[154px]"
     >
       <Image
         src={profileMeta.imageSrc}
         alt={`${profileMeta.name} portrait`}
         fill
-        sizes="154px"
+        sizes="(max-width: 640px) 128px, 154px"
         className="object-cover grayscale"
         priority={false}
       />
@@ -120,37 +120,37 @@ function ProfileCard({ style }: { style?: MotionStyle }) {
       variants={revealUp}
       transition={{ duration: 0.75, ease: easeOut }}
       style={style}
-      className="mt-[34px] rounded-[22px] border border-white/18 px-[26px] pb-[28px] pt-[29px] text-white/80"
+      className="mt-7 rounded-[18px] border border-white/18 px-4 pb-6 pt-6 text-white/80 sm:mt-[34px] sm:rounded-[22px] sm:px-[26px] sm:pb-[28px] sm:pt-[29px]"
     >
-      <div className="mx-auto grid max-w-[725px] grid-cols-[154px_1fr] items-start gap-[26px]">
+      <div className="mx-auto grid max-w-[725px] grid-cols-1 items-start justify-items-center gap-5 text-center sm:grid-cols-[154px_1fr] sm:justify-items-start sm:gap-[26px] sm:text-left">
         <ProfilePhotoPlaceholder />
 
         <div className="pt-[6px]">
-          <h3 className="text-[29px] font-bold leading-none text-white">
+          <h3 className="text-[24px] font-bold leading-tight text-white sm:text-[29px] sm:leading-none">
             {profileMeta.name}
           </h3>
-          <p className="mt-[9px] text-[17px] font-normal leading-none text-white/60">
+          <p className="mt-[9px] text-[15px] font-normal leading-tight text-white/60 sm:text-[17px] sm:leading-none">
             {profileMeta.roles}
           </p>
 
-          <dl className="mt-[27px] grid max-w-[420px] grid-cols-3 gap-[42px]">
+          <dl className="mt-6 grid max-w-[420px] grid-cols-3 gap-4 sm:mt-[27px] sm:gap-[42px]">
             {profileHighlights.map((item) => (
               <div key={item.label}>
-                <dd className="text-[18px] font-bold leading-tight text-white">
+                <dd className="text-[16px] font-bold leading-tight text-white sm:text-[18px]">
                   {item.value}
                 </dd>
-                <dt className="text-[15px] leading-tight text-white/72">
+                <dt className="text-[12px] leading-tight text-white/72 sm:text-[15px]">
                   {item.label}
                 </dt>
               </div>
             ))}
           </dl>
 
-          <dl className="mt-[17px] grid grid-cols-[38px_1fr] gap-x-[15px] gap-y-[1px] text-[11px] leading-[1.35] text-white/65">
+          <dl className="mt-[17px] grid grid-cols-[52px_minmax(0,1fr)] gap-x-3 gap-y-1 text-left text-[11px] leading-[1.35] text-white/65 sm:grid-cols-[38px_1fr] sm:gap-x-[15px]">
             <dt>email</dt>
-            <dd>{profileMeta.email}</dd>
+            <dd className="break-all">{profileMeta.email}</dd>
             <dt>linkedin</dt>
-            <dd>{profileMeta.linkedin}</dd>
+            <dd className="break-all">{profileMeta.linkedin}</dd>
           </dl>
         </div>
       </div>
@@ -165,7 +165,7 @@ function ProfileCard({ style }: { style?: MotionStyle }) {
             },
           },
         }}
-        className="mx-auto mt-[18px] flex max-w-[585px] items-start justify-between gap-4"
+        className="mx-auto mt-6 grid max-w-[585px] grid-cols-3 justify-items-center gap-x-4 gap-y-5 sm:mt-[18px] sm:flex sm:items-start sm:justify-between sm:gap-4"
       >
         {skillItems.map((skill) => (
           <motion.li
@@ -193,7 +193,7 @@ function ProfileCard({ style }: { style?: MotionStyle }) {
         ))}
       </motion.ul>
 
-      <div className="mt-[15px] grid h-[320px] grid-cols-3 grid-rows-2 overflow-hidden rounded-[3px]">
+      <div className="mt-6 grid min-h-[420px] grid-cols-1 overflow-hidden rounded-[3px] sm:mt-[15px] sm:h-[320px] sm:min-h-0 sm:grid-cols-3 sm:grid-rows-2">
         {workPlaceholders.map((item) => (
           <motion.div
             key={item.label}
@@ -225,13 +225,13 @@ function AboutCopy({ style }: { style?: MotionStyle }) {
       variants={revealUp}
       transition={{ duration: 0.75, delay: 0.12, ease: easeOut }}
       style={style}
-      className="mt-[31px] max-w-[1050px] text-white"
+      className="mt-7 max-w-[1050px] text-white sm:mt-[31px]"
     >
-      <p className="text-[20px] font-bold leading-[1.45] text-white">
+      <p className="text-[17px] font-bold leading-[1.45] text-white sm:text-[20px]">
         {aboutCopy.lede}
       </p>
 
-      <div className="mt-[23px] space-y-[24px] text-[20px] font-normal leading-[1.16] text-white/70">
+      <div className="mt-5 space-y-5 text-[16px] font-normal leading-[1.35] text-white/70 sm:mt-[23px] sm:space-y-[24px] sm:text-[20px] sm:leading-[1.16]">
         {aboutCopy.paragraphs.map((paragraph) => (
           <motion.p
             key={paragraph}
@@ -264,7 +264,7 @@ export function AboutSection() {
       ref={sectionRef}
       id="about"
       aria-labelledby="about-heading"
-      className="relative min-h-svh overflow-hidden px-9 pb-[76px] pt-[84px] font-sans text-white"
+      className="relative min-h-svh overflow-hidden px-4 pb-16 pt-24 font-sans text-white sm:px-6 sm:pb-[76px] sm:pt-[84px] lg:px-9"
     >
       <motion.div
         initial="hidden"
@@ -285,7 +285,7 @@ export function AboutSection() {
           variants={revealUp}
           transition={{ duration: 0.7, ease: easeOut }}
           style={{ y: headingY }}
-          className="text-[34px] font-bold leading-none tracking-normal text-white"
+          className="text-[29px] font-bold leading-none tracking-normal text-white sm:text-[34px]"
         >
           about.
         </motion.h2>

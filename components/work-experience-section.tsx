@@ -15,7 +15,7 @@ type ExperienceItem = (typeof experienceItems)[number];
 
 function TagList({ tags }: { tags: string[] }) {
   return (
-    <ul className="mt-[27px] flex max-w-[565px] flex-wrap gap-[8px]">
+    <ul className="mt-6 flex max-w-[565px] flex-wrap gap-2 sm:mt-[27px]">
       {tags.map((tag) => (
         <motion.li
           key={tag}
@@ -24,7 +24,7 @@ function TagList({ tags }: { tags: string[] }) {
             visible: { opacity: 1, y: 0 },
           }}
           transition={{ duration: 0.35, ease: easeOut }}
-          className="rounded-full border border-white/28 bg-white/7 px-[15px] py-[9px] text-[13px] font-medium leading-none text-white/90"
+          className="rounded-full border border-white/28 bg-white/7 px-3 py-2 text-[12px] font-medium leading-none text-white/90 sm:px-[15px] sm:py-[9px] sm:text-[13px]"
         >
           {tag}
         </motion.li>
@@ -35,12 +35,12 @@ function TagList({ tags }: { tags: string[] }) {
 
 function DashboardPlaceholder() {
   return (
-    <div className="h-full w-full bg-[#11171a] p-[18px]">
+    <div className="h-full w-full bg-[#11171a] p-3 sm:p-[18px]">
       <div className="mb-3 flex items-center justify-between text-[8px] text-white/65">
         <span>AQUILA</span>
         <span>dashboard preview</span>
       </div>
-      <div className="grid h-[216px] grid-cols-[1.08fr_1fr_1fr_1fr] grid-rows-[1fr_1.2fr] gap-[8px]">
+      <div className="grid h-full min-h-[216px] grid-cols-2 gap-[8px] sm:grid-cols-[1.08fr_1fr_1fr_1fr] sm:grid-rows-[1fr_1.2fr]">
         <div className="rounded-sm border border-white/8 bg-[#182226] p-3">
           <div className="grid grid-cols-4 gap-2">
             {["12", "23", "34", "3"].map((value) => (
@@ -88,7 +88,7 @@ function DashboardPlaceholder() {
 function DevicesPlaceholder() {
   return (
     <div className="relative h-full w-full overflow-hidden bg-[radial-gradient(circle_at_50%_80%,rgba(255,255,255,0.12),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.08),rgba(0,0,0,0.2))]">
-      <div className="absolute left-[66px] top-[70px] h-[146px] w-[250px] -rotate-[20deg] rounded-[8px] bg-[#333] shadow-2xl">
+      <div className="absolute left-[8%] top-[34%] h-[116px] w-[198px] -rotate-[20deg] rounded-[8px] bg-[#333] shadow-2xl sm:left-[66px] sm:top-[70px] sm:h-[146px] sm:w-[250px]">
         <div className="absolute inset-[6px] overflow-hidden rounded-[4px] bg-[#d7d9d3]">
           <Image
             src="/Login.png"
@@ -98,9 +98,9 @@ function DevicesPlaceholder() {
             className="object-cover"
           />
         </div>
-        <div className="absolute -bottom-[42px] left-[58px] h-[54px] w-[170px] skew-x-[-24deg] rounded-sm bg-[#878985]" />
+        <div className="absolute -bottom-[34px] left-[46px] h-[43px] w-[136px] skew-x-[-24deg] rounded-sm bg-[#878985] sm:-bottom-[42px] sm:left-[58px] sm:h-[54px] sm:w-[170px]" />
       </div>
-      <div className="absolute right-[70px] top-[34px] h-[230px] w-[104px] rounded-[24px] bg-black p-[7px] shadow-2xl">
+      <div className="absolute right-[8%] top-[28px] h-[206px] w-[94px] rounded-[22px] bg-black p-[7px] shadow-2xl sm:right-[70px] sm:top-[34px] sm:h-[230px] sm:w-[104px] sm:rounded-[24px]">
         <div className="relative h-full overflow-hidden rounded-[18px] bg-[#eef0ea]">
           <Image
             src="/Login%20Page.png"
@@ -117,7 +117,7 @@ function DevicesPlaceholder() {
 
 function CollagePlaceholder() {
   return (
-    <div className="grid h-full w-full grid-cols-[1fr_1fr_0.95fr] grid-rows-2 gap-[12px] bg-[rgba(255,255,255,0.04)] p-[24px]">
+    <div className="grid h-full w-full grid-cols-2 gap-2 bg-[rgba(255,255,255,0.04)] p-3 sm:grid-cols-[1fr_1fr_0.95fr] sm:grid-rows-2 sm:gap-[12px] sm:p-[24px]">
       <div className="relative overflow-hidden bg-[#0d2028]">
         <Image
           src="/louiza%20cover%202.JPG"
@@ -136,7 +136,7 @@ function CollagePlaceholder() {
           className="object-cover"
         />
       </div>
-      <div className="relative row-span-2 overflow-hidden bg-[#faf1e8]">
+      <div className="relative row-span-2 overflow-hidden bg-[#faf1e8] max-sm:row-span-1">
         <Image
           src="/cover%20full.JPG"
           alt="Editorial portrait preview"
@@ -172,7 +172,7 @@ function MediaPlaceholder({
         visible: { opacity: 1, x: 0, scale: 1 },
       }}
       transition={{ duration: 0.75, ease: easeOut }}
-      className="h-[302px] overflow-hidden rounded-[9px] border border-white/24 bg-white/7"
+      className="h-[240px] overflow-hidden rounded-[9px] border border-white/24 bg-white/7 sm:h-[302px]"
     >
       {imageSrc ? (
         <div className="relative h-full w-full bg-[#11171a]">
@@ -206,20 +206,20 @@ function ExperienceRow({ item }: { item: ExperienceItem }) {
           },
         },
       }}
-      className="grid grid-cols-[minmax(0,545px)_minmax(420px,525px)] gap-[45px] border-b border-white/14 pb-[53px] pt-[44px] first:pt-0"
+      className="grid grid-cols-1 gap-8 border-b border-white/14 pb-11 pt-10 first:pt-0 lg:grid-cols-[minmax(0,545px)_minmax(360px,525px)] lg:gap-[45px] lg:pb-[53px] lg:pt-[44px]"
     >
       <div>
         <motion.h3
           variants={revealUp}
           transition={{ duration: 0.62, ease: easeOut }}
-          className="text-[25px] font-semibold leading-none text-white"
+          className="text-[22px] font-semibold leading-tight text-white sm:text-[25px] sm:leading-none"
         >
           {item.title}
         </motion.h3>
         <motion.p
           variants={revealUp}
           transition={{ duration: 0.62, ease: easeOut }}
-          className="mt-[9px] text-[16px] leading-none text-white/55"
+          className="mt-[9px] text-[14px] leading-tight text-white/55 sm:text-[16px] sm:leading-none"
         >
           {item.subtitle}
         </motion.p>
@@ -227,14 +227,14 @@ function ExperienceRow({ item }: { item: ExperienceItem }) {
         <motion.h4
           variants={revealUp}
           transition={{ duration: 0.62, ease: easeOut }}
-          className="mt-[26px] text-[16px] font-semibold leading-none text-white"
+          className="mt-6 text-[16px] font-semibold leading-none text-white sm:mt-[26px]"
         >
           significant contributions
         </motion.h4>
         <motion.div
           variants={revealUp}
           transition={{ duration: 0.62, ease: easeOut }}
-          className="mt-[20px] space-y-[17px] text-[14px] leading-[1.1] text-white/82"
+          className="mt-5 space-y-4 text-[14px] leading-[1.35] text-white/82 sm:mt-[20px] sm:space-y-[17px] lg:leading-[1.1]"
         >
           {item.contributions.map((contribution) => (
             <p key={contribution}>{contribution}</p>
@@ -248,7 +248,7 @@ function ExperienceRow({ item }: { item: ExperienceItem }) {
         <motion.div
           variants={revealUp}
           transition={{ duration: 0.62, ease: easeOut }}
-          className="mb-[52px] flex justify-end gap-[17px] text-[19px] leading-none text-white/85"
+          className="mb-5 flex justify-start gap-3 text-[15px] leading-none text-white/85 sm:text-[17px] lg:mb-[52px] lg:justify-end lg:gap-[17px] lg:text-[19px]"
         >
           <span>{item.type}</span>
           <span className="text-[#c8b56d]/70">|</span>
@@ -265,7 +265,7 @@ export function WorkExperienceSection() {
     <section
       id="works"
       aria-labelledby="works-heading"
-      className="relative overflow-hidden px-9 pb-[75px] pt-[85px] font-sans text-white"
+      className="relative overflow-hidden px-4 pb-16 pt-16 font-sans text-white sm:px-6 sm:pb-[75px] sm:pt-[85px] lg:px-9"
     >
       <div className="relative z-10 mx-auto max-w-[1076px]">
         <motion.h2
@@ -274,7 +274,7 @@ export function WorkExperienceSection() {
           whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           viewport={{ once: true, amount: 0.7 }}
           transition={{ duration: 0.7, ease: easeOut }}
-          className="mb-[42px] text-[36px] font-bold leading-none tracking-normal text-white"
+          className="mb-9 text-[29px] font-bold leading-tight tracking-normal text-white sm:mb-[42px] sm:text-[36px] sm:leading-none"
         >
           works and experience.
         </motion.h2>
