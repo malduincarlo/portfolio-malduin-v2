@@ -7,7 +7,7 @@ export const profileMeta = {
 };
 
 export const profileHighlights = [
-  { value: "25", label: "age" },
+  { value: "26", label: "age" },
   { value: "2", label: "yrs of experience" },
   { value: "99999", label: "coffee drinks" },
 ];
