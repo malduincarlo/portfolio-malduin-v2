@@ -4,7 +4,7 @@ export const gallerySections = [
     layout: "ui",
     items: [
       {
-        label: "AQUILA overview dashboard",
+        label: "Cybersecurity overview dashboard",
         description:
           "A dark security operations dashboard focused on scan status, findings, and response efficiency.",
         meta: "dashboard design",
@@ -16,7 +16,7 @@ export const gallerySections = [
           "linear-gradient(135deg,#0f171a,#101416 45%,#242b2d), radial-gradient(circle at 38% 45%,#d9df22 0 11%,transparent 12%)",
       },
       {
-        label: "AQUILA intelligence dashboard",
+        label: "Cybersecurity intelligence dashboard",
         description:
           "Incident detail view with modal workflows, response metrics, and investigation context.",
         meta: "cybersecurity ui",
