@@ -3,7 +3,7 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { gallerySections } from "@/constants/portfolio";
+import { gallerySections } from "@/constants/gallery";
 import { NdaPreview } from "@/components/nda-preview";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
