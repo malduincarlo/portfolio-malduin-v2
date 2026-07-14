@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { gallerySections } from "@/constants/portfolio";
+import { NdaPreview } from "@/components/nda-preview";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
@@ -14,6 +15,14 @@ const revealUp = {
 
 type GallerySectionData = (typeof gallerySections)[number];
 type GalleryItemData = GallerySectionData["items"][number];
+
+function isNdaItem(item: GalleryItemData, imageSrc?: string) {
+  return (
+    item.label.toLowerCase().includes("aquila") ||
+    imageSrc?.includes("Main%20Dashboard") ||
+    imageSrc?.includes("Cyber%20Response")
+  );
+}
 
 function DashboardDetails({ item }: { item: GalleryItemData }) {
   if (!item.label.toLowerCase().includes("aquila")) {
@@ -100,40 +109,78 @@ function VideoDetails({ label }: { label: string }) {
   );
 }
 
-function GalleryTile({ item }: { item: GalleryItemData }) {
+function GalleryTile({
+  item,
+  showCaption = true,
+}: {
+  item: GalleryItemData;
+  showCaption?: boolean;
+}) {
   const imageSrc = "imageSrc" in item ? item.imageSrc : undefined;
   const imageClassName =
     "imageClassName" in item ? item.imageClassName : undefined;
+  const frameClassName =
+    "frameClassName" in item ? item.frameClassName : undefined;
   const style = {
     background: item.background,
   } satisfies CSSProperties;
 
   return (
-    <motion.div
+    <motion.article
       variants={revealUp}
       transition={{ duration: 0.65, ease: easeOut }}
       whileHover={{ y: -4, scale: 1.01 }}
-      className={`relative overflow-hidden bg-white/8 shadow-[0_18px_45px_rgba(0,0,0,0.16)] ${item.className}`}
-      style={style}
+      className={`group min-w-0 ${item.className}`}
     >
-      {imageSrc ? (
-        <Image
-          src={imageSrc}
-          alt={item.label}
-          fill
-          sizes="(max-width: 900px) 100vw, 50vw"
-          className={imageClassName ?? "object-cover"}
-        />
-      ) : (
-        <>
-          <DashboardDetails item={item} />
-          {item.label === "editorial portrait" && <EditorialDetails />}
-          {item.label.includes("channel") && <VideoDetails label={item.label} />}
-        </>
+      <div
+        className={`relative overflow-hidden rounded-[8px] border border-white/12 bg-white/8 shadow-[0_18px_45px_rgba(0,0,0,0.16)] ${frameClassName}`}
+        style={style}
+      >
+        {imageSrc ? (
+          isNdaItem(item, imageSrc) ? (
+            <NdaPreview>
+              <Image
+                src={imageSrc}
+                alt={item.label}
+                fill
+                sizes="(max-width: 900px) 100vw, 50vw"
+                className={imageClassName ?? "object-cover"}
+              />
+            </NdaPreview>
+          ) : (
+            <Image
+              src={imageSrc}
+              alt={item.label}
+              fill
+              sizes="(max-width: 900px) 100vw, 50vw"
+              className={`${imageClassName ?? "object-cover"} transition duration-500 ease-out group-hover:scale-[1.035]`}
+            />
+          )
+        ) : (
+          <>
+            <DashboardDetails item={item} />
+            {item.label === "editorial portrait" && <EditorialDetails />}
+            {item.label.includes("channel") && (
+              <VideoDetails label={item.label} />
+            )}
+          </>
+        )}
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),transparent_42%,rgba(0,0,0,0.16))]" />
+      </div>
+      {showCaption && (
+        <div className="pt-3 sm:pt-[14px]">
+          <p className="text-[10px] font-bold uppercase leading-none tracking-[0.16em] text-[#c8b56d]/85">
+            {item.meta}
+          </p>
+          <h4 className="mt-2 truncate text-[16px] font-bold leading-tight text-white sm:text-[18px]">
+            {item.label}
+          </h4>
+          <p className="mt-1.5 line-clamp-2 text-[13px] leading-[1.35] text-white/58 sm:text-[14px]">
+            {item.description}
+          </p>
+        </div>
       )}
-      <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),transparent_42%,rgba(0,0,0,0.16))]" />
-      <span className="sr-only">{item.label}</span>
-    </motion.div>
+    </motion.article>
   );
 }
 
@@ -164,7 +211,11 @@ function GalleryGroup({ section }: { section: GallerySectionData }) {
       </motion.h3>
       <div className="grid grid-cols-12 gap-3 sm:gap-[16px]">
         {section.items.map((item) => (
-          <GalleryTile key={item.label} item={item} />
+          <GalleryTile
+            key={item.label}
+            item={item}
+            showCaption={section.layout !== "photo"}
+          />
         ))}
       </div>
     </motion.section>

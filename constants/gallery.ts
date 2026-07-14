@@ -5,7 +5,11 @@ export const gallerySections = [
     items: [
       {
         label: "AQUILA overview dashboard",
-        className: "col-span-12 h-[210px] sm:col-span-6 sm:h-[228px]",
+        description:
+          "A dark security operations dashboard focused on scan status, findings, and response efficiency.",
+        meta: "dashboard design",
+        className: "col-span-12 sm:col-span-6",
+        frameClassName: "h-[210px] sm:h-[228px]",
         imageSrc: "/Main%20Dashboard%20-%20Dark.png",
         imageClassName: "object-contain bg-[#11171a] p-2",
         background:
@@ -13,7 +17,11 @@ export const gallerySections = [
       },
       {
         label: "AQUILA intelligence dashboard",
-        className: "col-span-12 h-[210px] sm:col-span-6 sm:h-[228px]",
+        description:
+          "Incident detail view with modal workflows, response metrics, and investigation context.",
+        meta: "cybersecurity ui",
+        className: "col-span-12 sm:col-span-6",
+        frameClassName: "h-[210px] sm:h-[228px]",
         imageSrc: "/Cyber%20Response%20Efficiency%20Rabbit%20Hole%20-%20Modal%20Open%201.png",
         imageClassName: "object-contain bg-[#11171a] p-2",
         background:
@@ -21,31 +29,36 @@ export const gallerySections = [
       },
       {
         label: "ETCMF web app",
-        className: "col-span-12 h-[205px] sm:col-span-5",
+        description:
+          "Clean login experience for a fundraising and member-facing web platform.",
+        meta: "web app",
+        className: "col-span-12 sm:col-span-6",
+        frameClassName: "h-[205px]",
         imageSrc: "/Login.png",
         background:
           "linear-gradient(135deg,#e6e8e1,#a8aea8 52%,#f0f3ea), radial-gradient(circle at 22% 62%,#6fa134 0 15%,transparent 16%)",
       },
       {
         label: "ETCMF mobile app",
-        className: "col-span-6 h-[205px] sm:col-span-2",
-        imageSrc: "/Login%20Page.png",
+        description: "Mobile-first login concept with a simple, calm interface.",
+        meta: "mobile ui",
+        className: "col-span-6 sm:col-span-2",
+        frameClassName: "h-[205px]",
+        imageSrc: "/etcmf-mobile-dashboard.png",
         imageClassName: "object-contain bg-white",
         background:
           "linear-gradient(180deg,#f4f6ef,#e7ece3), linear-gradient(135deg,#9bc67f,#f5f5f2)",
       },
       {
         label: "travel landing page",
-        className: "col-span-6 h-[205px] sm:col-span-3",
+        description:
+          "Hero-focused travel landing page with destination imagery and warm editorial spacing.",
+        meta: "landing page",
+        className: "col-span-6 sm:col-span-4",
+        frameClassName: "h-[205px]",
         imageSrc: "/HOME.png",
         background:
           "linear-gradient(135deg,#f4f1e8,#d7b07d 38%,#7497a6 39%,#cfd8d9 72%,#ece9df)",
-      },
-      {
-        label: "travel article page",
-        className: "col-span-12 h-[180px] sm:col-span-2 sm:h-[205px]",
-        background:
-          "linear-gradient(135deg,#fff7ed,#f0c472 48%,#f7f2e7), radial-gradient(circle at 35% 34%,#d8b774 0 24%,transparent 25%)",
       },
     ],
   },
@@ -55,38 +68,62 @@ export const gallerySections = [
     items: [
       {
         label: "night portrait",
-        className: "col-span-12 h-[229px] sm:col-span-4",
+        description:
+          "Low-light portrait work shaped around contrast, mood, and a cool color grade.",
+        meta: "portrait",
+        className: "col-span-12 sm:col-span-4",
+        frameClassName: "h-[229px]",
         imageSrc: "/louiza%20cover%202.JPG",
         background: "linear-gradient(135deg,#061a20,#d0b7b5 54%,#080a0d)",
       },
       {
         label: "mountain road",
-        className: "col-span-12 h-[229px] sm:col-span-4",
+        description:
+          "Landscape frame using road lines and muted mountain tones for depth.",
+        meta: "landscape",
+        className: "col-span-12 sm:col-span-4",
+        frameClassName: "h-[229px]",
         imageSrc: "/cover_whole.jpg",
         background: "linear-gradient(135deg,#958a5a,#c8b382 40%,#7f2630)",
       },
       {
         label: "night profile",
-        className: "col-span-12 h-[229px] sm:col-span-4",
+        description:
+          "Profile composition with dramatic lighting and restrained green shadows.",
+        meta: "creative portrait",
+        className: "col-span-12 sm:col-span-4",
+        frameClassName: "h-[229px]",
         imageSrc: "/image%2010.png",
         background: "linear-gradient(135deg,#041b12,#d8e1c7 55%,#07130e)",
       },
       {
         label: "editorial portrait",
-        className: "col-span-12 h-[420px] sm:col-span-5 sm:row-span-2 sm:h-[622px]",
+        description:
+          "Editorial-style portrait with soft tones, clean framing, and a magazine-like finish.",
+        meta: "editorial",
+        className: "col-span-12 sm:col-span-5 sm:row-span-2",
+        frameClassName: "h-[420px] sm:h-[622px]",
         imageSrc: "/cover%20full.JPG",
         background: "linear-gradient(180deg,#f7f3ed,#fffaf5 52%,#e8e3dd)",
       },
       {
         label: "smoke portrait",
-        className: "col-span-12 h-[260px] sm:col-span-7 sm:h-[307px]",
+        description:
+          "Atmospheric portrait using smoke, hard contrast, and cinematic color balance.",
+        meta: "photo treatment",
+        className: "col-span-12 sm:col-span-7",
+        frameClassName: "h-[260px] sm:h-[307px]",
         imageSrc: "/image%2011.png",
         background:
           "linear-gradient(135deg,#020609,#1c2b2a 42%,#d8d9cf 43%,#0a1010 72%,#030607)",
       },
       {
         label: "forest stream",
-        className: "col-span-12 h-[250px] sm:col-span-7 sm:h-[283px]",
+        description:
+          "Nature frame focused on texture, water movement, and a subdued earth palette.",
+        meta: "nature",
+        className: "col-span-12 sm:col-span-7",
+        frameClassName: "h-[250px] sm:h-[283px]",
         imageSrc: "/image%2012.png",
         background:
           "linear-gradient(135deg,#111908,#4c4b27 36%,#d9dec6 51%,#1c2511 78%,#0c1008)",
@@ -99,14 +136,22 @@ export const gallerySections = [
     items: [
       {
         label: "LAPS Manolo channel",
-        className: "col-span-12 h-[260px] sm:col-span-6 sm:h-[362px]",
+        description:
+          "Channel visual system and thumbnail direction for a Manolo-focused video series.",
+        meta: "video branding",
+        className: "col-span-12 sm:col-span-6",
+        frameClassName: "h-[260px] sm:h-[362px]",
         imageSrc: "/image%2013.png",
         imageClassName: "object-contain bg-[#202326]",
         background: "linear-gradient(180deg,#fafafa 0 31%,#202326 32% 100%)",
       },
       {
         label: "LAAG Manolo channel",
-        className: "col-span-12 h-[260px] sm:col-span-6 sm:h-[362px]",
+        description:
+          "Travel and lifestyle video identity with bold title graphics and repeatable layouts.",
+        meta: "content system",
+        className: "col-span-12 sm:col-span-6",
+        frameClassName: "h-[260px] sm:h-[362px]",
         imageSrc: "/image%2014.png",
         imageClassName: "object-contain bg-[#202326]",
         background: "linear-gradient(180deg,#fffaf5 0 31%,#202326 32% 100%)",

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { experienceItems } from "@/constants/portfolio";
+import { NdaPreview } from "@/components/nda-preview";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
@@ -12,6 +13,14 @@ const revealUp = {
 };
 
 type ExperienceItem = (typeof experienceItems)[number];
+
+function isNdaPreview(media: ExperienceItem["media"], imageSrc?: string) {
+  return (
+    media === "dashboard" ||
+    imageSrc?.includes("Main%20Dashboard") ||
+    imageSrc?.includes("Cyber%20Response")
+  );
+}
 
 function TagList({ tags }: { tags: string[] }) {
   return (
@@ -87,29 +96,24 @@ function DashboardPlaceholder() {
 
 function DevicesPlaceholder() {
   return (
-    <div className="relative h-full w-full overflow-hidden bg-[radial-gradient(circle_at_50%_80%,rgba(255,255,255,0.12),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.08),rgba(0,0,0,0.2))]">
-      <div className="absolute left-[8%] top-[34%] h-[116px] w-[198px] -rotate-[20deg] rounded-[8px] bg-[#333] shadow-2xl sm:left-[66px] sm:top-[70px] sm:h-[146px] sm:w-[250px]">
-        <div className="absolute inset-[6px] overflow-hidden rounded-[4px] bg-[#d7d9d3]">
-          <Image
-            src="/Login.png"
-            alt="ETCMF login preview"
-            fill
-            sizes="250px"
-            className="object-cover"
-          />
-        </div>
-        <div className="absolute -bottom-[34px] left-[46px] h-[43px] w-[136px] skew-x-[-24deg] rounded-sm bg-[#878985] sm:-bottom-[42px] sm:left-[58px] sm:h-[54px] sm:w-[170px]" />
+    <div className="grid h-full w-full grid-cols-[minmax(0,1.45fr)_minmax(92px,0.55fr)] items-center gap-3 bg-[linear-gradient(135deg,rgba(255,255,255,0.1),rgba(0,0,0,0.18))] p-3 sm:gap-4 sm:p-5">
+      <div className="relative h-[154px] overflow-hidden rounded-[7px] border border-white/18 bg-white/8 shadow-[0_16px_36px_rgba(0,0,0,0.2)] sm:h-[206px]">
+        <Image
+          src="/etcmf-web-login.png"
+          alt="ETCMF web login preview"
+          fill
+          sizes="(max-width: 900px) 62vw, 330px"
+          className="object-cover"
+        />
       </div>
-      <div className="absolute right-[8%] top-[28px] h-[206px] w-[94px] rounded-[22px] bg-black p-[7px] shadow-2xl sm:right-[70px] sm:top-[34px] sm:h-[230px] sm:w-[104px] sm:rounded-[24px]">
-        <div className="relative h-full overflow-hidden rounded-[18px] bg-[#eef0ea]">
-          <Image
-            src="/Login%20Page.png"
-            alt="ETCMF mobile preview"
-            fill
-            sizes="104px"
-            className="object-cover"
-          />
-        </div>
+      <div className="relative mx-auto h-[210px] w-[100px] overflow-hidden rounded-[22px] border-[6px] border-black bg-white shadow-[0_16px_36px_rgba(0,0,0,0.24)] sm:h-[248px] sm:w-[118px] sm:rounded-[26px]">
+        <Image
+          src="/etcmf-mobile-dashboard.png"
+          alt="ETCMF mobile dashboard preview"
+          fill
+          sizes="118px"
+          className="object-cover"
+        />
       </div>
     </div>
   );
@@ -176,16 +180,32 @@ function MediaPlaceholder({
     >
       {imageSrc ? (
         <div className="relative h-full w-full bg-[#11171a]">
-          <Image
-            src={imageSrc}
-            alt={`${media} preview`}
-            fill
-            sizes="(max-width: 900px) 100vw, 525px"
-            className="object-contain p-[18px]"
-          />
+          {isNdaPreview(media, imageSrc) ? (
+            <NdaPreview>
+              <Image
+                src={imageSrc}
+                alt={`${media} preview`}
+                fill
+                sizes="(max-width: 900px) 100vw, 525px"
+                className="object-contain p-[18px]"
+              />
+            </NdaPreview>
+          ) : (
+            <Image
+              src={imageSrc}
+              alt={`${media} preview`}
+              fill
+              sizes="(max-width: 900px) 100vw, 525px"
+              className="object-contain p-[18px]"
+            />
+          )}
         </div>
       ) : null}
-      {!imageSrc && media === "dashboard" && <DashboardPlaceholder />}
+      {!imageSrc && media === "dashboard" && (
+        <NdaPreview>
+          <DashboardPlaceholder />
+        </NdaPreview>
+      )}
       {media === "devices" && <DevicesPlaceholder />}
       {media === "collage" && <CollagePlaceholder />}
     </motion.div>

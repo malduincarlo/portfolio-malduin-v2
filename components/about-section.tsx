@@ -8,6 +8,7 @@ import {
   useTransform,
   type MotionStyle,
 } from "framer-motion";
+import { NdaPreview } from "@/components/nda-preview";
 import {
   aboutCopy,
   profileHighlights,
@@ -22,6 +23,13 @@ const revealUp = {
   hidden: { opacity: 0, y: 28, filter: "blur(7px)" },
   visible: { opacity: 1, y: 0, filter: "blur(0px)" },
 };
+
+function isNdaPreview(imageSrc: string) {
+  return (
+    imageSrc.includes("Main%20Dashboard") ||
+    imageSrc.includes("Cyber%20Response")
+  );
+}
 
 function ProfilePhotoPlaceholder() {
   return (
@@ -204,13 +212,25 @@ function ProfileCard({ style }: { style?: MotionStyle }) {
             transition={{ duration: 0.6, ease: easeOut }}
             className={`relative overflow-hidden border border-black/15 ${item.className}`}
           >
-            <Image
-              src={item.imageSrc}
-              alt={`${item.label} preview`}
-              fill
-              sizes="(max-width: 900px) 100vw, 33vw"
-              className="object-cover"
-            />
+            {isNdaPreview(item.imageSrc) ? (
+              <NdaPreview>
+                <Image
+                  src={item.imageSrc}
+                  alt={`${item.label} preview`}
+                  fill
+                  sizes="(max-width: 900px) 100vw, 33vw"
+                  className="object-cover"
+                />
+              </NdaPreview>
+            ) : (
+              <Image
+                src={item.imageSrc}
+                alt={`${item.label} preview`}
+                fill
+                sizes="(max-width: 900px) 100vw, 33vw"
+                className="object-cover"
+              />
+            )}
             <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.1),transparent_45%,rgba(0,0,0,0.16))]" />
           </motion.div>
         ))}
@@ -256,8 +276,7 @@ export function AboutSection() {
     offset: ["start end", "end start"],
   });
   const headingY = useTransform(scrollYProgress, [0, 1], [34, -34]);
-  const cardY = useTransform(scrollYProgress, [0, 1], [58, -42]);
-  const copyY = useTransform(scrollYProgress, [0, 1], [32, -66]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [38, -34]);
 
   return (
     <section
@@ -289,8 +308,8 @@ export function AboutSection() {
         >
           about.
         </motion.h2>
-        <ProfileCard style={{ y: cardY }} />
-        <AboutCopy style={{ y: copyY }} />
+        <ProfileCard style={{ y: contentY }} />
+        <AboutCopy style={{ y: contentY }} />
       </motion.div>
     </section>
   );
