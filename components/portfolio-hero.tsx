@@ -1,7 +1,13 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import {
   contactLinks,
   locationInfo,
@@ -10,9 +16,23 @@ import {
 import { PortfolioIcon, type PortfolioIconName } from "@/components/portfolio-icon";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
+const heroRoles = [siteIdentity.role, "photographer", "video editor"] as const;
 
 function HeroCopy() {
   const copyRef = useRef<HTMLElement>(null);
+  const [roleIndex, setRoleIndex] = useState(0);
+  const prefersReducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+
+    const interval = window.setInterval(() => {
+      setRoleIndex((current) => (current + 1) % heroRoles.length);
+    }, 3600);
+
+    return () => window.clearInterval(interval);
+  }, [prefersReducedMotion]);
+
   const { scrollYProgress } = useScroll({
     target: copyRef,
     offset: ["start center", "end start"],
@@ -56,9 +76,23 @@ function HeroCopy() {
           visible: { opacity: 1, y: 0 },
         }}
         transition={{ duration: 0.65, ease: easeOut }}
-        className="mt-[5px] text-[18px] font-medium leading-tight text-white/93 sm:text-[22px]"
+        className="mt-[5px] min-h-[23px] text-[18px] font-medium leading-tight text-white/93 sm:min-h-[28px] sm:text-[22px]"
       >
-        {siteIdentity.role}
+        <span className="sr-only">product designer, photographer, video editor</span>
+        <span aria-hidden="true">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={heroRoles[roleIndex]}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="inline-block"
+            >
+              {heroRoles[roleIndex]}
+            </motion.span>
+          </AnimatePresence>
+        </span>
       </motion.p>
       <motion.p
         variants={{

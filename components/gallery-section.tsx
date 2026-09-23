@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { gallerySections } from "@/constants/gallery";
@@ -15,6 +15,7 @@ const revealUp = {
 
 type GallerySectionData = (typeof gallerySections)[number];
 type GalleryItemData = GallerySectionData["items"][number];
+type SelectedImage = { imageSrc: string; label: string; nda?: boolean };
 
 function isNdaItem(item: GalleryItemData, imageSrc?: string) {
   return (
@@ -112,15 +113,24 @@ function VideoDetails({ label }: { label: string }) {
 function GalleryTile({
   item,
   showCaption = true,
+  onOpenImage,
 }: {
   item: GalleryItemData;
   showCaption?: boolean;
+  onOpenImage?: (images: SelectedImage[]) => void;
 }) {
   const imageSrc = "imageSrc" in item ? item.imageSrc : undefined;
+  const previewImages = "previewImages" in item ? item.previewImages : undefined;
   const imageClassName =
     "imageClassName" in item ? item.imageClassName : undefined;
   const frameClassName =
     "frameClassName" in item ? item.frameClassName : undefined;
+  const sampleUrl = "sampleUrl" in item ? item.sampleUrl : undefined;
+  const imagesToOpen: SelectedImage[] | undefined = previewImages
+    ? [...previewImages]
+    : imageSrc
+      ? [{ imageSrc, label: item.label, nda: isNdaItem(item, imageSrc) }]
+      : undefined;
   const style = {
     background: item.background,
   } satisfies CSSProperties;
@@ -133,10 +143,27 @@ function GalleryTile({
       className={`group min-w-0 ${item.className}`}
     >
       <div
-        className={`relative overflow-hidden rounded-[8px] border border-white/12 bg-white/8 shadow-[0_18px_45px_rgba(0,0,0,0.16)] ${frameClassName}`}
+        className={`relative overflow-hidden rounded-[8px] border border-white/12 bg-white/8 shadow-[0_18px_45px_rgba(0,0,0,0.16)] focus-within:ring-2 focus-within:ring-[#c8b56d] focus-within:ring-offset-2 focus-within:ring-offset-[#121515] ${frameClassName}`}
         style={style}
       >
-        {imageSrc ? (
+        {previewImages ? (
+          <div className="absolute inset-0 grid grid-cols-2 gap-2 bg-[#e9eee6] p-3 sm:gap-3 sm:p-4">
+            {previewImages.map((preview) => (
+              <div
+                key={preview.imageSrc}
+                className="relative min-h-0 overflow-hidden rounded-[5px] bg-white shadow-[0_8px_20px_rgba(28,54,26,0.13)]"
+              >
+                <Image
+                  src={preview.imageSrc}
+                  alt={preview.label}
+                  fill
+                  sizes="(max-width: 640px) 45vw, 16vw"
+                  className="object-contain transition duration-500 group-hover:scale-[1.025]"
+                />
+              </div>
+            ))}
+          </div>
+        ) : imageSrc ? (
           isNdaItem(item, imageSrc) ? (
             <NdaPreview>
               <Image
@@ -165,7 +192,30 @@ function GalleryTile({
             )}
           </>
         )}
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),transparent_42%,rgba(0,0,0,0.16))]" />
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),transparent_42%,rgba(0,0,0,0.16))]" />
+        {onOpenImage && imagesToOpen && (
+          <button
+            type="button"
+            className="absolute inset-0 cursor-zoom-in focus:outline-none"
+            aria-label={previewImages ? `View image gallery: ${item.label}` : `View full image: ${item.label}`}
+            onClick={() => onOpenImage(imagesToOpen)}
+          >
+            <span className="absolute bottom-3 right-3 rounded-full border border-white/25 bg-black/55 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.13em] text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 focus-visible:opacity-100">
+              {previewImages ? "View screens" : showCaption ? "View design" : "View photo"}
+            </span>
+          </button>
+        )}
+        {sampleUrl && (
+          <a
+            href={sampleUrl}
+            aria-label={`Click to show sample output for ${item.label}`}
+            className="absolute inset-0 flex cursor-pointer items-end justify-center bg-black/0 pb-4 transition-colors duration-200 hover:bg-black/55 focus-visible:bg-black/55 focus-visible:outline-none sm:items-center sm:pb-0"
+          >
+            <span className="rounded-full border border-white/35 bg-black/70 px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-white shadow-[0_8px_24px_rgba(0,0,0,0.2)] transition-opacity duration-200 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
+              Click to show sample output
+            </span>
+          </a>
+        )}
       </div>
       {showCaption && (
         <div className="pt-3 sm:pt-[14px]">
@@ -184,7 +234,13 @@ function GalleryTile({
   );
 }
 
-function GalleryGroup({ section }: { section: GallerySectionData }) {
+function GalleryGroup({
+  section,
+  onOpenImage,
+}: {
+  section: GallerySectionData;
+  onOpenImage: (images: SelectedImage[]) => void;
+}) {
   return (
     <motion.section
       initial="hidden"
@@ -215,6 +271,7 @@ function GalleryGroup({ section }: { section: GallerySectionData }) {
             key={item.label}
             item={item}
             showCaption={section.layout !== "photo"}
+            onOpenImage={section.layout === "video" ? undefined : onOpenImage}
           />
         ))}
       </div>
@@ -223,6 +280,37 @@ function GalleryGroup({ section }: { section: GallerySectionData }) {
 }
 
 export function GallerySection() {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const [viewerImages, setViewerImages] = useState<SelectedImage[]>([]);
+  const [viewerIndex, setViewerIndex] = useState(0);
+  const selectedImage = viewerImages[viewerIndex];
+
+  useEffect(() => {
+    if (viewerImages.length === 0) return;
+
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+    };
+  }, [viewerImages.length]);
+
+  function openImages(images: SelectedImage[]) {
+    setViewerImages(images);
+    setViewerIndex(0);
+    dialogRef.current?.showModal();
+  }
+
+  function stepImage(direction: number) {
+    setViewerIndex((current) =>
+      (current + direction + viewerImages.length) % viewerImages.length,
+    );
+  }
+
   return (
     <section
       id="gallery"
@@ -242,9 +330,87 @@ export function GallerySection() {
         </motion.h2>
 
         {gallerySections.map((section) => (
-          <GalleryGroup key={section.title} section={section} />
+          <GalleryGroup
+            key={section.title}
+            section={section}
+            onOpenImage={openImages}
+          />
         ))}
       </div>
+      <dialog
+        ref={dialogRef}
+        aria-label={selectedImage ? `Full image: ${selectedImage.label}` : "Image viewer"}
+        onClose={() => setViewerImages([])}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) dialogRef.current?.close();
+        }}
+        onKeyDown={(event) => {
+          if (viewerImages.length < 2) return;
+          if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+            event.preventDefault();
+            stepImage(event.key === "ArrowRight" ? 1 : -1);
+          }
+        }}
+        className="fixed inset-0 z-50 m-0 h-dvh max-h-none w-screen max-w-none overflow-hidden bg-[#080a0a]/96 p-0 text-white backdrop:bg-black/90 open:flex open:items-center open:justify-center"
+      >
+        <div className="flex h-full w-full max-w-[1600px] flex-col px-4 pb-5 pt-4 sm:px-8 sm:pb-7 sm:pt-6">
+          <div className="flex shrink-0 justify-end pb-3 sm:pb-4">
+            <button
+              type="button"
+              onClick={() => dialogRef.current?.close()}
+              className="grid h-10 w-10 place-items-center rounded-full border border-white/20 bg-white/5 text-white/80 transition hover:bg-white/12 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c8b56d]"
+              aria-label="Close image viewer"
+            >
+              <span aria-hidden="true" className="text-[25px] font-light leading-none">×</span>
+            </button>
+          </div>
+          {selectedImage && (
+            <div className={`relative min-h-0 flex-1 ${viewerImages.length > 1 ? "mx-auto w-full max-w-[560px]" : ""}`}>
+              <Image
+                src={selectedImage.imageSrc}
+                alt={selectedImage.label}
+                fill
+                sizes="100vw"
+                className={`object-contain ${selectedImage.nda ? "blur-[6px] brightness-[0.75]" : ""}`}
+              />
+              {selectedImage.nda && (
+                <div className="absolute inset-0 grid place-items-center">
+                  <span className="rounded-full border border-white/25 bg-black/65 px-5 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-white">
+                    Under NDA
+                  </span>
+                </div>
+              )}
+              {viewerImages.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => stepImage(-1)}
+                    aria-label="Previous image"
+                    className="absolute left-1 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-white/20 bg-black/65 text-white/85 transition hover:bg-black/85 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c8b56d] sm:left-4 sm:h-12 sm:w-12"
+                  >
+                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="h-5 w-5">
+                      <path d="m15 18-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => stepImage(1)}
+                    aria-label="Next image"
+                    className="absolute right-1 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-white/20 bg-black/65 text-white/85 transition hover:bg-black/85 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c8b56d] sm:right-4 sm:h-12 sm:w-12"
+                  >
+                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="h-5 w-5">
+                      <path d="m9 18 6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                  <span className="sr-only" aria-live="polite">
+                    Image {viewerIndex + 1} of {viewerImages.length}
+                  </span>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      </dialog>
     </section>
   );
 }
