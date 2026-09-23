@@ -113,14 +113,21 @@ function VideoDetails({ label }: { label: string }) {
 function GalleryTile({
   item,
   showCaption = true,
+  isPhoto = false,
   onOpenImage,
 }: {
   item: GalleryItemData;
   showCaption?: boolean;
-  onOpenImage?: (images: SelectedImage[]) => void;
+  isPhoto?: boolean;
+  onOpenImage?: (images: SelectedImage[], index?: number) => void;
 }) {
+  const [previewIndex, setPreviewIndex] = useState(0);
   const imageSrc = "imageSrc" in item ? item.imageSrc : undefined;
   const previewImages = "previewImages" in item ? item.previewImages : undefined;
+  const previewLayout = "previewLayout" in item ? item.previewLayout : undefined;
+  const isSeries = previewLayout === "single" && Boolean(previewImages?.length);
+  const displayedImage = isSeries ? previewImages?.[previewIndex] : undefined;
+  const displayedSrc = displayedImage?.imageSrc ?? imageSrc;
   const imageClassName =
     "imageClassName" in item ? item.imageClassName : undefined;
   const frameClassName =
@@ -146,7 +153,7 @@ function GalleryTile({
         className={`relative overflow-hidden rounded-[8px] border border-white/12 bg-white/8 shadow-[0_18px_45px_rgba(0,0,0,0.16)] focus-within:ring-2 focus-within:ring-[#c8b56d] focus-within:ring-offset-2 focus-within:ring-offset-[#121515] ${frameClassName}`}
         style={style}
       >
-        {previewImages ? (
+        {previewImages && !isSeries ? (
           <div className="absolute inset-0 grid grid-cols-2 gap-2 bg-[#e9eee6] p-3 sm:gap-3 sm:p-4">
             {previewImages.map((preview) => (
               <div
@@ -163,12 +170,12 @@ function GalleryTile({
               </div>
             ))}
           </div>
-        ) : imageSrc ? (
-          isNdaItem(item, imageSrc) ? (
+        ) : displayedSrc ? (
+          isNdaItem(item, displayedSrc) ? (
             <NdaPreview>
               <Image
-                src={imageSrc}
-                alt={item.label}
+                src={displayedSrc}
+                alt={displayedImage?.label ?? item.label}
                 fill
                 sizes="(max-width: 900px) 100vw, 50vw"
                 className={imageClassName ?? "object-cover"}
@@ -176,8 +183,8 @@ function GalleryTile({
             </NdaPreview>
           ) : (
             <Image
-              src={imageSrc}
-              alt={item.label}
+              src={displayedSrc}
+              alt={displayedImage?.label ?? item.label}
               fill
               sizes="(max-width: 900px) 100vw, 50vw"
               className={`${imageClassName ?? "object-cover"} transition duration-500 ease-out group-hover:scale-[1.035]`}
@@ -198,21 +205,46 @@ function GalleryTile({
             type="button"
             className="absolute inset-0 cursor-zoom-in focus:outline-none"
             aria-label={previewImages ? `View image gallery: ${item.label}` : `View full image: ${item.label}`}
-            onClick={() => onOpenImage(imagesToOpen)}
+            onClick={() => onOpenImage(imagesToOpen, isSeries ? previewIndex : 0)}
           >
-            <span className="absolute bottom-3 right-3 rounded-full border border-white/25 bg-black/55 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.13em] text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 focus-visible:opacity-100">
-              {previewImages ? "View screens" : showCaption ? "View design" : "View photo"}
+            <span className={`absolute right-3 rounded-full border border-white/25 bg-black/55 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.13em] text-white transition-opacity duration-200 ${isSeries ? "top-3" : "bottom-3 opacity-0 group-hover:opacity-100 focus-visible:opacity-100"}`}>
+              {isSeries ? "View series" : previewImages ? "View screens" : isPhoto ? "View photo" : "View design"}
             </span>
           </button>
+        )}
+        {isSeries && previewImages && (
+          <div className="absolute bottom-3 left-3 right-3 z-10 flex items-center justify-between gap-3 text-white">
+            <button
+              type="button"
+              aria-label="Previous Lumen design"
+              onClick={() => setPreviewIndex((index) => (index - 1 + previewImages.length) % previewImages.length)}
+              className="grid h-9 w-9 place-items-center rounded-full border border-white/35 bg-black/65 transition hover:bg-black/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c8b56d]"
+            >
+              <span aria-hidden="true">‹</span>
+            </button>
+            <span className="rounded-full bg-black/65 px-3 py-1 text-[11px] font-semibold tracking-[0.12em]">
+              {previewIndex + 1} / {previewImages.length}
+            </span>
+            <button
+              type="button"
+              aria-label="Next Lumen design"
+              onClick={() => setPreviewIndex((index) => (index + 1) % previewImages.length)}
+              className="grid h-9 w-9 place-items-center rounded-full border border-white/35 bg-black/65 transition hover:bg-black/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c8b56d]"
+            >
+              <span aria-hidden="true">›</span>
+            </button>
+          </div>
         )}
         {sampleUrl && (
           <a
             href={sampleUrl}
-            aria-label={`Click to show sample output for ${item.label}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open sample video for ${item.label} in a new tab`}
             className="absolute inset-0 flex cursor-pointer items-end justify-center bg-black/0 pb-4 transition-colors duration-200 hover:bg-black/55 focus-visible:bg-black/55 focus-visible:outline-none sm:items-center sm:pb-0"
           >
             <span className="rounded-full border border-white/35 bg-black/70 px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-white shadow-[0_8px_24px_rgba(0,0,0,0.2)] transition-opacity duration-200 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
-              Click to show sample output
+              Watch sample video ↗
             </span>
           </a>
         )}
@@ -239,7 +271,7 @@ function GalleryGroup({
   onOpenImage,
 }: {
   section: GallerySectionData;
-  onOpenImage: (images: SelectedImage[]) => void;
+  onOpenImage: (images: SelectedImage[], index?: number) => void;
 }) {
   return (
     <motion.section
@@ -270,7 +302,8 @@ function GalleryGroup({
           <GalleryTile
             key={item.label}
             item={item}
-            showCaption={section.layout !== "photo"}
+            showCaption={section.layout !== "photo" && section.layout !== "graphic"}
+            isPhoto={section.layout === "photo"}
             onOpenImage={section.layout === "video" ? undefined : onOpenImage}
           />
         ))}
@@ -299,9 +332,9 @@ export function GallerySection() {
     };
   }, [viewerImages.length]);
 
-  function openImages(images: SelectedImage[]) {
+  function openImages(images: SelectedImage[], index = 0) {
     setViewerImages(images);
-    setViewerIndex(0);
+    setViewerIndex(index);
     dialogRef.current?.showModal();
   }
 
